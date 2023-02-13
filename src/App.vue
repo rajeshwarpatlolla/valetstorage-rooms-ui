@@ -21,9 +21,9 @@
             <div class="pb-4">Room {{ rIndex }}</div>
             <v-row no-gutters v-for="(row, index) in rows" :key="index">
               <v-col no-gutters v-for="(r, i) in groupByLabel(rIndex, String.fromCharCode(65 + index))" :key="i" class="grid ma-1">
-                <div class="pa-2" :class="{ filled: !r.isAvailable }">
+                <div class="pa-2 details" :class="{ filled: !r.isAvailable }">
                   <div>{{ r.label }}</div>
-                  <div>{{ r?.user?.substr(0, 12) }}</div>
+                  <div>{{ r?.order?.substr(12, 24) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       rows: 26,
-      storageFacilityId: '637492b2a904ba7202911643',
+      storageFacilityId: '63e62d9da6945347ad39a511',
       rooms: null,
       env: 'http://localhost:3000',
       envs: [
@@ -65,7 +65,8 @@ export default {
       }
     },
     groupByLabel(row, char) {
-      return _.filter(_.sortBy(this.rooms[row], 'label'), (i) => i.label.startsWith(char));
+      // return _.filter(_.sortBy(this.rooms[row], 'label'), (i) => i.label.startsWith(char));
+      return _.filter(_.sortBy(this.rooms[row], 'cratedAt'), (i) => i.label.startsWith(char));
     },
   },
 };
@@ -74,9 +75,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .grid {
-  background-color: #42b983;
+  background-color: green;
 }
 .filled {
   background-color: red;
+}
+.details {
+  color: #fff;
 }
 </style>
