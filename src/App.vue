@@ -45,7 +45,7 @@ export default {
       rows: 26,
       storageFacilityId: '637492b2a904ba7202911643',
       rooms: null,
-      env: { label: 'Localhost', value: 'http://localhost:3000' },
+      env: 'http://localhost:3000',
       envs: [
         { label: 'Localhost', value: 'http://localhost:3000' },
         { label: 'Develop', value: 'https://dev-api.valetcloset.com' },
@@ -58,15 +58,13 @@ export default {
   methods: {
     async getStorageFacilityDetails(storageFacilityId) {
       try {
-        const response = await axios.get(`${this.env?.value}/storage-spaces/storage-facilities/${storageFacilityId}`);
-        this.rooms = _.groupBy(response.data, 'room');
-        console.log(this.rooms);
+        const response = await axios.get(`${this.env}/storage-spaces/storage-facilities/${storageFacilityId}`);
+        this.rooms = _.groupBy(response.data, 'room') || [];
       } catch (error) {
         console.error(error);
       }
     },
     groupByLabel(row, char) {
-      console.log(row, char, this.rooms[row]);
       return _.filter(_.sortBy(this.rooms[row], 'label'), (i) => i.label.startsWith(char));
     },
   },
