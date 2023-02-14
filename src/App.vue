@@ -21,7 +21,7 @@
             <div class="pb-4">Room {{ rIndex }}</div>
             <v-row no-gutters v-for="(row, index) in rows" :key="index">
               <v-col no-gutters v-for="(r, i) in groupByLabel(rIndex, String.fromCharCode(65 + index))" :key="i" class="grid ma-1">
-                <div class="pa-2 details" :class="{ filled: !r.isAvailable }">
+                <div class="pa-2" :class="{ filled: !r.isAvailable }" :style="{ 'background-color': getDynamicColor(r) }">
                   <div>{{ r.label }}</div>
                   <div>{{ r?.order?.substr(12, 24) }}</div>
                 </div>
@@ -43,9 +43,11 @@ export default {
   data() {
     return {
       rows: 26,
-      storageFacilityId: '63e62d9da6945347ad39a511',
+      storageFacilityId: '63d8be4891ea8fef1feb0fde',
+      // storageFacilityId: '63c7c744020d5c9f0f4981ad',
       rooms: null,
       env: 'http://localhost:3000',
+      // env: 'https://api.valetcloset.com',
       envs: [
         { label: 'Localhost', value: 'http://localhost:3000' },
         { label: 'Develop', value: 'https://dev-api.valetcloset.com' },
@@ -56,6 +58,23 @@ export default {
   },
   mounted() {},
   methods: {
+    stringToColor(str) {
+      var hash = 0;
+      for (var i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+
+      var c = (hash & 0x00ffffff).toString(16).toUpperCase();
+
+      return `#${'00000'.substring(0, 6 - c.length) + c}`;
+    },
+    getDynamicColor(r) {
+      if (r.order) {
+        return this.stringToColor(r.order);
+      } else {
+        return '';
+      }
+    },
     async getStorageFacilityDetails(storageFacilityId) {
       try {
         const response = await axios.get(`${this.env}/storage-spaces/storage-facilities/${storageFacilityId}`);
@@ -65,8 +84,10 @@ export default {
       }
     },
     groupByLabel(row, char) {
-      // return _.filter(_.sortBy(this.rooms[row], 'label'), (i) => i.label.startsWith(char));
-      return _.filter(_.sortBy(this.rooms[row], 'cratedAt'), (i) => i.label.startsWith(char));
+      return _.filter(
+        _.sortBy(this.rooms[row], (r) => Number(r?.label?.slice(1, 10))),
+        (i) => i.label.startsWith(char)
+      );
     },
   },
 };
@@ -75,12 +96,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .grid {
-  background-color: green;
+  border: 1px solid #555;
+  border-radius: 4px;
 }
 .filled {
-  background-color: red;
-}
-.details {
   color: #fff;
 }
 </style>
