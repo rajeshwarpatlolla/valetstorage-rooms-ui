@@ -22,8 +22,8 @@
             <v-row no-gutters v-for="(row, index) in rows" :key="index">
               <v-col no-gutters v-for="(r, i) in groupByLabel(rIndex, String.fromCharCode(65 + index))" :key="i" class="grid ma-1">
                 <div class="pa-2" :class="{ filled: !r.isAvailable }" :style="{ 'background-color': getDynamicColor(r) }">
-                  <div>{{ r.label }}</div>
-                  <div>{{ r?.order?.substr(12, 24) }}</div>
+                  <div>{{ r.gridLabel }}</div>
+                  <div>{{ r?.order?.substr(18, 24) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -43,10 +43,10 @@ export default {
   data() {
     return {
       rows: 26,
-      storageFacilityId: '63d8be4891ea8fef1feb0fde',
+      storageFacilityId: '6406ed746e4d017a954e1fd6',
       // storageFacilityId: '63c7c744020d5c9f0f4981ad',
       rooms: null,
-      env: 'http://localhost:3000',
+      env: 'https://api.valetcloset.com',
       // env: 'https://api.valetcloset.com',
       envs: [
         { label: 'Localhost', value: 'http://localhost:3000' },
@@ -78,15 +78,16 @@ export default {
     async getStorageFacilityDetails(storageFacilityId) {
       try {
         const response = await axios.get(`${this.env}/storage-spaces/storage-facilities/${storageFacilityId}`);
-        this.rooms = _.groupBy(response.data, 'room') || [];
+        this.rooms = _.groupBy(response?.data, 'room') || [];
       } catch (error) {
         console.error(error);
       }
     },
     groupByLabel(row, char) {
+      console.log(row, char, this.rooms);
       return _.filter(
-        _.sortBy(this.rooms[row], (r) => Number(r?.label?.slice(1, 10))),
-        (i) => i.label.startsWith(char)
+        _.sortBy(this.rooms[row], (r) => Number(r?.gridLabel?.slice(1, 10))),
+        (i) => i.gridLabel.startsWith(char)
       );
     },
   },
