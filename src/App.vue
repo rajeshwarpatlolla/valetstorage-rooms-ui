@@ -20,10 +20,13 @@
           <v-col cols="12">
             <div class="pb-4">Room {{ rIndex }}</div>
             <v-row no-gutters v-for="(row, index) in rows" :key="index">
-              <v-col no-gutters v-for="(r, i) in groupByLabel(rIndex, String.fromCharCode(65 + index))" :key="i" class="grid ma-1">
+              <v-col no-gutters v-for="(r, i) in groupByLabel(rIndex, String.fromCharCode(65 + index))" :key="i" class="grid ma-1" :class="{ walkway: r.isWalkWay }">
                 <div class="pa-2" :class="{ filled: !r.isAvailable }" :style="{ 'background-color': getDynamicColor(r) }">
                   <div>{{ r.gridLabel }}</div>
-                  <div>{{ r?.order?.substr(18, 24) }}</div>
+                  <div>
+                    <span v-if="r.isWalkWay">Walk Way</span>
+                    <span v-else>{{ r?.order?.substr(18, 24) }}</span>
+                  </div>
                 </div>
               </v-col>
             </v-row>
@@ -43,11 +46,11 @@ export default {
   data() {
     return {
       rows: 26,
-      storageFacilityId: '6406ed746e4d017a954e1fd6',
+      storageFacilityId: '63ff2d3c6efab8a1c603a592',
       // storageFacilityId: '63c7c744020d5c9f0f4981ad',
       rooms: null,
-      env: 'https://api.valetcloset.com',
       // env: 'https://api.valetcloset.com',
+      env: 'https://dev-api.valetcloset.com',
       envs: [
         { label: 'Localhost', value: 'http://localhost:3000' },
         { label: 'Develop', value: 'https://dev-api.valetcloset.com' },
@@ -102,5 +105,8 @@ export default {
 }
 .filled {
   color: #fff;
+}
+.walkway {
+  background-image: linear-gradient(to right, red, blue);
 }
 </style>
